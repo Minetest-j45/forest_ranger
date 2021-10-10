@@ -236,20 +236,24 @@ class ForestRangerGame {
         let skybox = new THREE.Mesh( skyboxGeo, matArray );
         this._menuscene.add(skybox);
 
-        const planetexture = new THREE.TextureLoader().load('./resources/ground.png');
-        planetexture.wrapS = planetexture.wrapT = THREE.RepeatWrapping;
-        planetexture.repeat.set( 640, 640 );
-        planetexture.anisotropy = 16;
-        planetexture.encoding = THREE.sRGBEncoding;
-        var planeMaterial = new THREE.MeshStandardMaterial( { map: planetexture } );
-        const plane = new THREE.Mesh(
-            new THREE.PlaneGeometry(640, 640, 10, 10),
-            planeMaterial
-        );
-        plane.castShadow = false;
-        plane.receiveShadow = true;
-        plane.rotation.x = -Math.PI / 2;
-        this._menuscene.add(plane);
+        const planeSize = 640;
+        const planeLoader = new THREE.TextureLoader();
+        const planeText = planeLoader.load('./resources/ground.png');
+        planeText.wrapS = THREE.RepeatWrapping;
+        planeText.wrapT = THREE.RepeatWrapping;
+        planeText.magFilter = THREE.NearestFilter;
+        const repeats = planeSize / 2;
+        planeText.repeat.set(repeats, repeats);
+        const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize, 10, 10);
+        const planeMat = new THREE.MeshPhongMaterial({
+          map: planeText,
+          side: THREE.DoubleSide,
+        });
+        const mesh = new THREE.Mesh(planeGeo, planeMat);
+        mesh.castShadow = false;
+        mesh.receiveShadow = true;
+        mesh.rotation.x = -Math.PI / 2;
+        this._menuscene.add(mesh);
 
         const objLoader = new OBJLoader();
         objLoader.load('./resources/forest_house.obj', (root) => {
