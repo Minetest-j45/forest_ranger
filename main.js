@@ -3,6 +3,9 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.mod
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 
 import {OBJLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/OBJLoader.js';
+
+import Stats from 'https://cdn.jsdelivr.net/npm/three@0.112.1/examples/jsm/libs/stats.module.js';
+
 const _NOISE_GLSL = `
 //
 // Description : Array and textureless GLSL 2D/3D/4D simplex
@@ -173,6 +176,11 @@ class ForestRangerGame {
         this._threejsmenu.setSize(window.innerWidth, window.innerHeight);
 
         document.body.appendChild(this._threejsmenu.domElement);
+
+        const target = document.getElementById('stats');
+        target.appendChild(this._threejsmenu.domElement);
+        this._stats = new Stats();
+				target.appendChild(this._stats.dom);
 
         window.addEventListener('resize', () => {
             this._OnWindowResize();
@@ -544,6 +552,7 @@ class ForestRangerGame {
             this._threejs.render(this._scene, this._camera);
           } else if (this._threejsmenu) {
             this._threejsmenu.render(this._menuscene, this._camera);
+            this._stats.update();
             
             let vector = new THREE.Vector3(0, 0, 0);
             vector.applyQuaternion(this._camera.quaternion);
