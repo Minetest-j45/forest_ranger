@@ -559,6 +559,7 @@ class ForestRangerGame {
         for (let s of this._shaders) {
           s.uniforms.fogTime.value = this._totalTime;
         }
+        //thanks to EliasFleckenstein03 (fleckenstein@elidragon.com) for this
         let a = this._totalTime * Math.PI * 2 * 0.005;
         this._camera.position.x = Math.cos(a) * 180 - 100;
         this._camera.position.z = Math.sin(a) * 180 - 125;
