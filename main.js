@@ -564,7 +564,6 @@ class ForestRangerGame {
         this._camera.position.z = Math.sin(a) * 180 - 125;
         let vector = new THREE.Vector3(-80, 0, -125);
         this._camera.lookAt(vector);
-        console.log(this._camera.position);
     }
 }
 
