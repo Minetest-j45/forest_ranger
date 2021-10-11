@@ -6,6 +6,10 @@ import {OBJLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm
 
 import Stats from 'https://cdn.jsdelivr.net/npm/three@0.112.1/examples/jsm/libs/stats.module.js';
 
+var stats = true;//for settings, or keybind
+var beforestats = true;
+var fogshaders = true;//greatly increases performance when false but removes alot of the atmosphere
+
 const _NOISE_GLSL = `
 //
 // Description : Array and textureless GLSL 2D/3D/4D simplex
@@ -114,7 +118,8 @@ class ForestRangerGame {
     }
 
     _InitialiseMenu() {
-      THREE.ShaderChunk.fog_fragment = `
+      if (fogshaders) {
+        THREE.ShaderChunk.fog_fragment = `
       //https://github.com/simondevyoutube/ThreeJS_Tutorial_Fog/blob/main/main.js
       //NOT MINE
       //LICENSE: MIT
@@ -166,6 +171,7 @@ class ForestRangerGame {
       #ifdef USE_FOG
         varying vec3 vWorldPosition;
       #endif`;
+      }
 
       this._threejsmenu = new THREE.WebGLRenderer({
         antialias: true,
@@ -176,11 +182,6 @@ class ForestRangerGame {
         this._threejsmenu.setSize(window.innerWidth, window.innerHeight);
 
         document.body.appendChild(this._threejsmenu.domElement);
-
-        const target = document.getElementById('stats');
-        target.appendChild(this._threejsmenu.domElement);
-        this._stats = new Stats();
-				target.appendChild(this._stats.dom);
 
         window.addEventListener('resize', () => {
             this._OnWindowResize();
@@ -308,11 +309,31 @@ class ForestRangerGame {
         //trunk.scale.set(20, (Math.random() + 2.0) * 100.0, 20);
         //leaves.scale.set(50, trunk.scale.y * 5.0, 50);
 
+        const target = document.getElementById('title');
+        target.appendChild(this._threejsmenu.domElement);
+	      target.style.cssText = "position:fixed;top:10%;left:40%;cursor:default;opacity:0.9;z-index:10000;font-size:4vw;font-family:'Brush Script MT',cursive;text-decoration:underline;";
+        target.innerText = 'Forest Ranger';
+
+        const play = document.getElementById('play');
+        play.appendChild(this._threejsmenu.domElement);
+        play.style.cssText = "position:fixed;top:25%;left:50%;cursor:pointer;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;";
+        play.innerText = 'Play';
+        play.onclick = () => {
+          this._play();
+        }
 
         this._menuscene.fog = new THREE.FogExp2(0xDFE9F3, 0.00055);
         this._totalTime = 0.0;
         this._previousRAF = null;
         this._RAF();
+    }
+
+    _play() {
+      document.body.replaceChildren();
+      this._threejsmenu = null;
+      this._menuscene = null;
+      this._camera = null;
+      this._InitialiseGame();
     }
 
     _InitialiseGame() {
@@ -503,15 +524,15 @@ class ForestRangerGame {
         const leavesGeo = new THREE.ConeGeometry(1, 1, 32);
         trunkMat.onBeforeCompile = _ModifyShader;
         leavesMat.onBeforeCompile = _ModifyShader;
-        for (let x = 0; x < 50; ++x) {
-            for (let y = 0; y < 50; ++y) {
+        for (let x = 0; x < 10; ++x) {
+            for (let y = 0; y < 10; ++y) {
               const trunk = new THREE.Mesh(trunkGeo, trunkMat);
               const leaves = new THREE.Mesh(leavesGeo, leavesMat);
               trunk.scale.set(20, (Math.random() + 2.0) * 100.0, 20);
               trunk.position.set(
-                  15000.0 * (Math.random() * 2.0 - 1.0),
+                  3200.0 * (Math.random() * 2.0 - 1.0),
                   trunk.scale.y / 2.0,
-                  15000.0 * (Math.random() * 2.0 - 1.0));
+                  3200.0 * (Math.random() * 2.0 - 1.0));
       
               leaves.scale.copy(trunk.scale);
               leaves.scale.set(50, trunk.scale.y * 5.0, 50);
@@ -542,17 +563,37 @@ class ForestRangerGame {
 
     _RAF() {
         requestAnimationFrame((t) => {
-          if (this._previousRAF_ === null) {
+          if (this._previousRAF === null) {
             this._previousRAF = t;
+            if (stats) {
+              var target = document.getElementById('stats');
+              if (!target) {
+                var statdiv = document.createElement('div');
+                statdiv.id = 'stats';
+                document.body.appendChild(statdiv);
+              }
+              target = document.getElementById('stats');
+              if (this._threejs) {
+                target.appendChild(this._threejs.domElement);
+              } else if (this._threejsmenu) {
+                target.appendChild(this._threejsmenu.domElement);
+              }
+              this._stats = new Stats();
+              target.appendChild(this._stats.dom);
+              beforestats = stats;
+            }
           }
           this._Step((t - this._previousRAF) * 0.001);
           this._previousRAF = t;
           
           if (this._threejs) {
             this._threejs.render(this._scene, this._camera);
+            this._stats.update();
           } else if (this._threejsmenu) {
             this._threejsmenu.render(this._menuscene, this._camera);
-            this._stats.update();
+            if (stats && this._stats) {
+              this._stats.update();
+            }
             
             let vector = new THREE.Vector3(0, 0, 0);
             vector.applyQuaternion(this._camera.quaternion);
@@ -572,12 +613,40 @@ class ForestRangerGame {
         for (let s of this._shaders) {
           s.uniforms.fogTime.value = this._totalTime;
         }
-        //thanks to EliasFleckenstein03 (fleckenstein@elidragon.com) for this
-        let a = this._totalTime * Math.PI * 2 * 0.005;
-        this._camera.position.x = Math.cos(a) * 180 - 100;
-        this._camera.position.z = Math.sin(a) * 180 - 125;
-        let vector = new THREE.Vector3(-80, 0, -125);
-        this._camera.lookAt(vector);
+        if (this._threejsmenu) {
+          //thanks to EliasFleckenstein03 (fleckenstein@elidragon.com) for this
+          let a = this._totalTime * Math.PI * 2 * 0.005;
+          this._camera.position.x = Math.cos(a) * 180 - 100;
+          this._camera.position.z = Math.sin(a) * 180 - 125;
+          let vector = new THREE.Vector3(-80, 0, -125);
+          this._camera.lookAt(vector);
+
+          if (stats && !beforestats) {
+            const target = document.getElementById('stats');
+            target.appendChild(this._threejsmenu.domElement);
+            this._stats = new Stats();
+            target.appendChild(this._stats.dom);
+            beforestats = stats;
+          } else if (!stats && beforestats) {
+            const target = document.getElementById('stats');
+            target.removeChild(this._threejsmenu.domElement);
+            target.removeChild(this._stats.dom);
+            beforestats = stats;
+          }
+        } else if (this._threejs) {
+          if (stats && !beforestats) {
+            const target = document.getElementById('stats');
+            target.appendChild(this._threejs.domElement);
+            this._stats = new Stats();
+            target.appendChild(this._stats.dom);
+            beforestats = stats;
+          } else if (!stats && beforestats) {
+            const target = document.getElementById('stats');
+            target.removeChild(this._threejs.domElement);
+            target.removeChild(this._stats.dom);
+            beforestats = stats;
+          }
+        }
     }
 }
 
