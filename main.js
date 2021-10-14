@@ -1,14 +1,22 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 
-import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
+//import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
+import {FirstPersonControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/FirstPersonControls.js';
 
 import {OBJLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/OBJLoader.js';
+import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/GLTFLoader.js'
 
 import Stats from 'https://cdn.jsdelivr.net/npm/three@0.112.1/examples/jsm/libs/stats.module.js';
 
 var stats = true;//for settings, or keybind
 var beforestats = true;
-var fogshaders = true;//greatly increases performance when false but removes alot of the atmosphere
+var fogshaders = false;//greatly increases performance when false but removes alot of the atmosphere
+
+
+var clock = new THREE.Clock();
+var mixer = null;
+
+var quaternion = new THREE.Quaternion();
 
 const _NOISE_GLSL = `
 //
@@ -301,6 +309,10 @@ class ForestRangerGame {
             trunk.position.x,
             leaves.scale.y / 2 + (Math.random() + 10) * 2,
             trunk.position.z);
+            trunk.castShadow = true;
+            trunk.receiveShadow = true;
+            leaves.castShadow = true;
+            leaves.receiveShadow = true;
           this._menuscene.add(trunk);
           this._menuscene.add(leaves);
         }
@@ -337,7 +349,7 @@ class ForestRangerGame {
     }
 
     _InitialiseGame() {
-
+      if (fogshaders){
       THREE.ShaderChunk.fog_fragment = `
       //https://github.com/simondevyoutube/ThreeJS_Tutorial_Fog/blob/main/main.js
       //NOT MINE
@@ -390,6 +402,7 @@ class ForestRangerGame {
       #ifdef USE_FOG
         varying vec3 vWorldPosition;
       #endif`;
+      }
 
         this._threejs = new THREE.WebGLRenderer({
             antialias: true,
@@ -408,15 +421,15 @@ class ForestRangerGame {
         const fov = 60;
         const aspect = 1920 / 1080;
         const near = 1.0;
-        const far = /*1000.0*/5000.0;
+        const far = 10000.0;//big so no glitchy skybox, what limits eye range is fog and little light
         this._camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         this._camera.position.set(75, 20, 0);
 
         this._scene = new THREE.Scene();
 
 
-        let light = new THREE.DirectionalLight(0xFFFFFF, 0.4);
-        light.position.set(20, 100, 10);
+        let light = new THREE.DirectionalLight(0xFFFFFF, 0.2);
+        light.position.set(-2580, 2013, -2860);
         light.target.position.set(0, 0, 0);
         light.castShadow = true;
         light.shadow.bias = -0.001;
@@ -432,12 +445,14 @@ class ForestRangerGame {
         light.shadow.camera.bottom = -100;
         this._scene.add(light);
 
-        light = new THREE.AmbientLight(0x101010, 0.4);
+        light = new THREE.AmbientLight(0x101010, 0.3);
         this._scene.add(light);
 
-        const controls = new OrbitControls(this._camera, this._threejs.domElement);
-          controls.target.set(0, 20, 0);
-          controls.update();
+        this._controls = new FirstPersonControls(this._camera, this._threejs.domElement);
+        this._controls.movementSpeed = 100;
+        this._controls.lookSpeed = 0.1;
+        this._controls.mouseDragOn = true;
+        //this._controls.lookVertical = false;
 
         this._shaders = [];
         const _ModifyShader = (s) => {
@@ -540,11 +555,35 @@ class ForestRangerGame {
                   trunk.position.x,
                   leaves.scale.y / 2 + (Math.random() + 5) * 25,
                   trunk.position.z);
+
+              trunk.castShadow = true;
+              trunk.receiveShadow = true;
+              leaves.castShadow = true;
+              leaves.receiveShadow = true;
       
               this._scene.add(trunk);
               this._scene.add(leaves);
             }
           }
+        /*var playerLoader = new GLTFLoader();
+        playerLoader.load('./resources/ranger.glb', (gltf) => {
+            this._model = gltf.scene;
+            this._model.position.set(0, 0, 0);
+            this._model.scale.set(0.7, 1, 0.7);
+            this._model.traverse(o => {
+              if (o.isMesh) {
+                o.castShadow = true;
+                o.receiveShadow = true;
+              }
+            });
+            this._scene.add(this._model);
+            },
+            undefined,
+            (error) => {
+                console.error(error);
+            }
+        );*/
+
         this._scene.fog = new THREE.FogExp2(0xDFE9F3, 0.00005);
         this._totalTime = 0.0;
         this._previousRAF = null;
@@ -610,6 +649,7 @@ class ForestRangerGame {
 
     _Step(timeElapsed) {
         this._totalTime += timeElapsed;
+        console.log(this._camera.position);
         for (let s of this._shaders) {
           s.uniforms.fogTime.value = this._totalTime;
         }
@@ -634,6 +674,15 @@ class ForestRangerGame {
             beforestats = stats;
           }
         } else if (this._threejs) {
+          /*if (this._camera && this._model) {
+            this._camera.position.copy(this._model.position);
+            this._camera.position.y += 50;
+            this._camera.position.x += 0;
+            this._camera.position.z += -30;
+          }*/
+          if (this._controls) {
+            this._controls.update(clock.getDelta());
+          }
           if (stats && !beforestats) {
             const target = document.getElementById('stats');
             target.appendChild(this._threejs.domElement);
