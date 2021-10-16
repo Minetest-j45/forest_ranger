@@ -1,7 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 
 //import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
-import {FirstPersonControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/FirstPersonControls.js';
+import {FirstPersonControls} from './controls.js';
 
 import {OBJLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/OBJLoader.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/GLTFLoader.js'
@@ -423,7 +423,7 @@ class ForestRangerGame {
         const near = 1.0;
         const far = 10000.0;//big so no glitchy skybox, what limits eye range is fog and little light
         this._camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-        this._camera.position.set(75, 20, 0);
+        this._camera.position.set(75, 50, 0);
 
         this._scene = new THREE.Scene();
 
@@ -649,7 +649,6 @@ class ForestRangerGame {
 
     _Step(timeElapsed) {
         this._totalTime += timeElapsed;
-        console.log(this._camera.position);
         for (let s of this._shaders) {
           s.uniforms.fogTime.value = this._totalTime;
         }
