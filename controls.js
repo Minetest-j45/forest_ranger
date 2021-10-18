@@ -205,7 +205,7 @@ class FirstPersonControls {
 
 		this.update = function () {
 
-			const targetPosition = new Vector3();
+			var targetPosition = new Vector3();
 
 			return function update( delta ) {
 
@@ -270,6 +270,17 @@ class FirstPersonControls {
 				const position = this.object.position;
 
 				targetPosition.setFromSphericalCoords( 1, phi, theta ).add( position );
+
+				
+				/*if (targetPosition.x > 3199 || targetPosition.x < -3199) {
+					targetPosition = new Vector3(position.x, targetPosition.y, targetPosition.z);
+				}
+				if (targetPosition.z > 3199 || targetPosition.z < -3199) {
+					targetPosition = new Vector3(targetPosition.x, targetPosition.y, position.z);
+				}
+				if (targetPosition.y > 51 || targetPosition.y < 49) {
+					targetPosition = new Vector3(targetPosition.x, position.y, targetPosition.z);
+				}*/
 
 				this.object.lookAt( targetPosition );
 
