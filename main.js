@@ -272,7 +272,7 @@ class ForestRangerGame {
         mesh.rotation.x = -Math.PI / 2;
         this._menuscene.add(mesh);
 
-        const objLoader = new OBJLoader();
+        var objLoader = new OBJLoader();
         objLoader.load('./resources/forest_house.obj', (root) => {
           this._menuscene.add(root);
           root.position.set(0, 0, 0);
@@ -284,11 +284,23 @@ class ForestRangerGame {
         var playerLoader = new GLTFLoader();
         playerLoader.load('./resources/ranger.glb', (gltf) => {
             var player = gltf.scene;
-            player.position.set(-120, 0, -150);
+            player.position.set(10, 0, -110);
             player.scale.set(0.4, 0.4, 0.4);
             this._menuscene.add(player);
             }
         );
+
+        objLoader.load('./resources/jeep.obj', (root) => {
+          this._menuscene.add(root);
+          root.position.set(20, 0, -150);
+          //root.rotation.x = -Math.PI / 2;
+          root.scale.set(10, 12, 10);
+          this._camera.lookAt(root.position);
+        });
+        
+        //try setting loaders to null to increase performance
+        objLoader = null;
+        playerLoader = null;
 
         const trunkMat = new THREE.MeshStandardMaterial({color: 0x808080});
         const leavesMat = new THREE.MeshStandardMaterial({color: 0x80FF80});
@@ -609,9 +621,10 @@ class ForestRangerGame {
         for (let s of this._shaders) {
           s.uniforms.fogTime.value = this._totalTime;
         }
+        console.log(this._camera.position);
         if (this._threejsmenu) {
           //thanks to EliasFleckenstein03 (fleckenstein@elidragon.com) for this
-          let a = this._totalTime * Math.PI * 2 * 0.005;
+          let a = this._totalTime * Math.PI * 2 * /*0.005*/ 0.01;
           this._camera.position.x = Math.cos(a) * 180 - 100;
           this._camera.position.z = Math.sin(a) * 180 - 125;
           let vector = new THREE.Vector3(-80, 0, -125);
