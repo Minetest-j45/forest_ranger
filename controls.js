@@ -292,6 +292,12 @@ class FirstPersonControls {
 
 				this.object.lookAt( targetPosition );
 
+				if (lastShoot > 3) {
+					document.body.childNodes[3].innerHTML = "Your gun is loaded.";
+				} else {
+					document.body.childNodes[3].innerHTML = "Loading your gun...";
+				}
+
 				if (this.shoot && lastShoot > 3) {
 					var raycaster = new Raycaster();
 					var cameraDir = new Vector3();
@@ -299,31 +305,9 @@ class FirstPersonControls {
 
 					var intersects = raycaster.intersectObjects(scene.children, true);
 					if (intersects.length > 0) {
-						/*for (var i = 0; i < intersects.length; i++) {
-							console.log(intersects[i].object.name);
-							if (intersects[i].object.name != "cameraBox") {
-								if (intersects[i].object.name == "zombie") {
-									//zombie.position.set(0, -1000, 0);
-									console.log("zombie");
-									zombie.position.set(0, 0, 0);
-									this.score += 1;
-									document.body.childNodes[0].innerHTML = "Score: " + this.score;
-								}
-
-								var particles = new Geometry(),
-    							pMaterial = new PointsMaterial({color: 0xFFFF00, size: 5});
-
-								// create a particle
-								var particle = intersects[i].point;
-					  
-								// add it to the geometry
-								particles.vertices.push(particle);
-					  		
-								var particleSystem = new Points(particles, pMaterial);
-					
-								scene.add(particleSystem);
-							}
-						}*/
+						var audio = new Audio('./resources/gunshot.mp3');
+						audio.play();
+						
 						if (intersects[0].object.name == "cameraBox") {
 							console.log("cameraBox");
 							if (intersects[1].object.name == "zombie") {

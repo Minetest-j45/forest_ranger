@@ -14,7 +14,6 @@ var fogshaders = false;//greatly increases performance when false but removes al
 const raycaster = new THREE.Raycaster();
 var collidableMeshList = [];
 var clock = new THREE.Clock();
-var mixer = null;
 
 const _NOISE_GLSL = `
 //
@@ -352,6 +351,20 @@ class ForestRangerGame {
         play.onclick = () => {
           this._play();
         }
+
+        var audio = new Audio('./resources/atmospheric.mp3');
+        audio.loop = true;
+        audio.play();
+
+        const music = document.getElementById('settingmusic');
+        music.appendChild(this._threejsmenu.domElement);
+        music.style.cssText = "position:fixed;top:30%;left:43%;cursor:pointer;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;";
+        music.innerText = 'Stop background music';
+        music.onclick = () => {
+          audio.pause();
+          audio.currentTime = 0;
+        }
+
         if (fogshaders) {
           this._menuscene.fog = new THREE.FogExp2(0xDFE9F3, 0.00055);
         }
@@ -596,6 +609,12 @@ class ForestRangerGame {
         document.body.appendChild(hit);
         hit.style.cssText = "position:fixed;top:0%;left:49%;cursor:default;opacity:0.9;z-index:0;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
         hit.innerText = '';
+        
+        var ready = document.createElement('div');
+        ready.id = 'ready';
+        document.body.appendChild(ready);
+        ready.style.cssText = "position:fixed;top:95%;left:0%;cursor:default;opacity:0.9;z-index:0;font-size:1.5vw;font-family:'Brush Script MT',cursive;color:red;";
+        ready.innerText = 'Loading your gun...';
 
         if (fogshaders) {
           this._scene.fog = new THREE.FogExp2(0xDFE9F3, 0.00005);
