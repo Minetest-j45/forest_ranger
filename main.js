@@ -7,9 +7,7 @@ import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/js
 
 import Stats from 'https://cdn.jsdelivr.net/npm/three@0.112.1/examples/jsm/libs/stats.module.js';
 
-var stats = true;//for settings, or keybind
-var beforestats = true;
-var fogshaders = false;//greatly increases performance when false but removes alot of the atmosphere
+var fogshaders = true;//greatly increases performance when false but removes alot of the atmosphere
 
 const raycaster = new THREE.Raycaster();
 var collidableMeshList = [];
@@ -341,12 +339,12 @@ class ForestRangerGame {
 
         const target = document.getElementById('title');
         target.appendChild(this._threejsmenu.domElement);
-	      target.style.cssText = "position:fixed;top:10%;left:40%;cursor:default;opacity:0.9;z-index:10000;font-size:4vw;font-family:'Brush Script MT',cursive;text-decoration:underline;";
+	      target.style.cssText = "position:fixed;top:10%;left:40%;cursor:default;opacity:0.9;z-index:10000;font-size:4vw;font-family:'Brush Script MT',cursive;text-decoration:underline;color:red;";
         target.innerText = 'Forest Ranger';
 
         const play = document.getElementById('play');
         play.appendChild(this._threejsmenu.domElement);
-        play.style.cssText = "position:fixed;top:25%;left:50%;cursor:pointer;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;";
+        play.style.cssText = "position:fixed;top:25%;left:52%;cursor:pointer;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
         play.innerText = 'Play';
         play.onclick = () => {
           this._play();
@@ -358,16 +356,28 @@ class ForestRangerGame {
 
         const music = document.getElementById('settingmusic');
         music.appendChild(this._threejsmenu.domElement);
-        music.style.cssText = "position:fixed;top:30%;left:43%;cursor:pointer;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;";
+        music.style.cssText = "position:fixed;top:30%;left:43%;cursor:pointer;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
         music.innerText = 'Stop background music';
         music.onclick = () => {
           audio.pause();
           audio.currentTime = 0;
         }
-
-        if (fogshaders) {
-          this._menuscene.fog = new THREE.FogExp2(0xDFE9F3, 0.00055);
+        const fogsettingon = document.getElementById('settingfogon');
+        fogsettingon.appendChild(this._threejsmenu.domElement);
+        fogsettingon.style.cssText = "position:fixed;top:35%;left:43%;cursor:pointer;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
+        fogsettingon.innerText = 'Turn fog on (in game)';
+        fogsettingon.onclick = () => {
+          fogshaders = true;
         }
+        const fogsettingoff = document.getElementById('settingfogoff');
+        fogsettingoff.appendChild(this._threejsmenu.domElement);
+        fogsettingoff.style.cssText = "position:fixed;top:40%;left:43%;cursor:pointer;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
+        fogsettingoff.innerText = 'Turn fog off (in game)';
+        fogsettingoff.onclick = () => {
+          fogshaders = false;
+        }
+
+        this._menuscene.fog = new THREE.FogExp2(0xDFE9F3, 0.00055);
         this._totalTime = 0.0;
         this._previousRAF = null;
         this._RAF();
@@ -616,9 +626,7 @@ class ForestRangerGame {
         ready.style.cssText = "position:fixed;top:95%;left:0%;cursor:default;opacity:0.9;z-index:0;font-size:1.5vw;font-family:'Brush Script MT',cursive;color:red;";
         ready.innerText = 'Loading your gun...';
 
-        if (fogshaders) {
-          this._scene.fog = new THREE.FogExp2(0xDFE9F3, 0.00005);
-        }
+        this._scene.fog = new THREE.FogExp2(0xDFE9F3, 0.00005);
         this._totalTime = 0.0;
         this._previousRAF = null;
         this._RAF();
@@ -638,23 +646,21 @@ class ForestRangerGame {
         requestAnimationFrame((t) => {
           if (this._previousRAF === null) {
             this._previousRAF = t;
-            if (stats) {
-              var target = document.getElementById('stats');
-              if (!target) {
-                var statdiv = document.createElement('div');
-                statdiv.id = 'stats';
-                document.body.appendChild(statdiv);
-              }
-              target = document.getElementById('stats');
-              if (this._threejs) {
-                target.appendChild(this._threejs.domElement);
-              } else if (this._threejsmenu) {
-                target.appendChild(this._threejsmenu.domElement);
-              }
-              this._stats = new Stats();
-              target.appendChild(this._stats.dom);
-              beforestats = stats;
+            var target = document.getElementById('stats');
+            if (!target) {
+              var statdiv = document.createElement('div');
+               statdiv.id = 'stats';
+              document.body.appendChild(statdiv);
             }
+            target = document.getElementById('stats');
+            if (this._threejs) {
+               target.appendChild(this._threejs.domElement);
+            } else if (this._threejsmenu) {
+              target.appendChild(this._threejsmenu.domElement);
+            }
+            this._stats = new Stats();
+            target.appendChild(this._stats.dom);
+            
           }
           this._Step((t - this._previousRAF) * 0.001);
           this._previousRAF = t;
@@ -664,9 +670,7 @@ class ForestRangerGame {
             this._stats.update();
           } else if (this._threejsmenu) {
             this._threejsmenu.render(this._menuscene, this._camera);
-            if (stats && this._stats) {
-              this._stats.update();
-            }
+            this._stats.update();
           }
           this._RAF();
         });
@@ -685,18 +689,6 @@ class ForestRangerGame {
           let vector = new THREE.Vector3(-80, 0, -125);
           this._camera.lookAt(vector);
 
-          if (stats && !beforestats) {
-            const target = document.getElementById('stats');
-            target.appendChild(this._threejsmenu.domElement);
-            this._stats = new Stats();
-            target.appendChild(this._stats.dom);
-            beforestats = stats;
-          } else if (!stats && beforestats) {
-            const target = document.getElementById('stats');
-            target.removeChild(this._threejsmenu.domElement);
-            target.removeChild(this._stats.dom);
-            beforestats = stats;
-          }
         } else if (this._threejs) {
           //collision detection (http://stemkoski.github.io/Three.js/Collision-Detection.html)
           for (var vertexIndex = 0; vertexIndex < this._cameraBox.geometry.vertices.length; vertexIndex++)
@@ -746,19 +738,6 @@ class ForestRangerGame {
             }
 
           }*/
-          //stats
-          if (stats && !beforestats) {
-            const target = document.getElementById('stats');
-            target.appendChild(this._threejs.domElement);
-            this._stats = new Stats();
-            target.appendChild(this._stats.dom);
-            beforestats = stats;
-          } else if (!stats && beforestats) {
-            const target = document.getElementById('stats');
-            target.removeChild(this._threejs.domElement);
-            target.removeChild(this._stats.dom);
-            beforestats = stats;
-          }
         }
     }
 }
