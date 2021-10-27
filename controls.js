@@ -16,13 +16,9 @@ const _target = new Vector3();
 var score = 0;
 var lastShoot = 3;
 
-function wait(ms){
-	var start = new Date().getTime();
-	var end = start;
-	while(end < start + ms) {
-	  end = new Date().getTime();
-   }
- }
+function getRandomArbitrary(min, max) {
+	return Math.random() * (max - min) + min;
+}
 
 class FirstPersonControls {
 
@@ -295,7 +291,7 @@ class FirstPersonControls {
 				if (lastShoot > 3) {
 					document.body.childNodes[3].innerHTML = "Your gun is loaded.";
 				} else {
-					document.body.childNodes[3].innerHTML = "Loading your gun...";
+					document.body.childNodes[3].innerHTML = "Loading your gun... " + Math.round(lastShoot / 3 * 100) + "%";
 				}
 
 				if (this.shoot && lastShoot > 3) {
@@ -309,11 +305,14 @@ class FirstPersonControls {
 						audio.play();
 						
 						if (intersects[0].object.name == "cameraBox") {
-							console.log("cameraBox");
 							if (intersects[1].object.name == "zombie") {
-								console.log("zombie");
+								var audio = new Audio('./resources/ding.mp3');
+								audio.play();
 								score += 1;
 								document.body.childNodes[0].innerHTML = "Score: " + score;
+								zombie.position.x = getRandomArbitrary(-3200, 3200);
+								zombie.position.z = getRandomArbitrary(-3200, 3200);
+								
 								var particles = new Geometry(),
     							pMaterial = new PointsMaterial({color: 0xFFFF00, size: 5});
 
@@ -333,9 +332,13 @@ class FirstPersonControls {
 								}, 1000);
 							}
 						} else if (intersects[0].object.name == "zombie") {
-							console.log("zombie");
+							var audio = new Audio('./resources/ding.mp3');
+							audio.play();
 							score += 1;
 							document.body.childNodes[0].innerHTML = "Score: " + score;
+							zombie.position.x = getRandomArbitrary(-3200, 3200);
+							zombie.position.z = getRandomArbitrary(-3200, 3200);
+
 							var particles = new Geometry(),
     						pMaterial = new PointsMaterial({color: 0xFFFF00, size: 5});
 
@@ -367,6 +370,9 @@ class FirstPersonControls {
 								var particleSystem = new Points(particles, pMaterial);
 					
 								scene.add(particleSystem);
+								setTimeout(() => {
+									scene.remove(particleSystem);
+								}, 60000);
 						}
 					}
 					this.shoot = false;

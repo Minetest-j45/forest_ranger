@@ -121,7 +121,6 @@ class ForestRangerGame {
     }
 
     _InitialiseMenu() {
-      if (fogshaders) {
         THREE.ShaderChunk.fog_fragment = `
       //https://github.com/simondevyoutube/ThreeJS_Tutorial_Fog/blob/main/main.js
       //NOT MINE
@@ -174,7 +173,7 @@ class ForestRangerGame {
       #ifdef USE_FOG
         varying vec3 vWorldPosition;
       #endif`;
-      }
+      
 
       this._threejsmenu = new THREE.WebGLRenderer({
         antialias: true,
@@ -337,34 +336,46 @@ class ForestRangerGame {
         //trunk.scale.set(20, (Math.random() + 2.0) * 100.0, 20);
         //leaves.scale.set(50, trunk.scale.y * 5.0, 50);
 
-        const target = document.getElementById('title');
-        target.appendChild(this._threejsmenu.domElement);
-	      target.style.cssText = "position:fixed;top:10%;left:40%;cursor:default;opacity:0.9;z-index:10000;font-size:4vw;font-family:'Brush Script MT',cursive;text-decoration:underline;color:red;";
-        target.innerText = 'Forest Ranger';
+        //const target = document.getElementById('title');
+        //target.appendChild(this._threejsmenu.domElement);
+        var title = document.createElement('div');
+        title.id = 'title';
+        document.body.appendChild(title);
+	      title.style.cssText = "position:fixed;top:10%;left:40%;cursor:default;opacity:0.9;z-index:10000;font-size:4vw;font-family:'Brush Script MT',cursive;text-decoration:underline;color:red;";
+        title.innerText = 'Forest Ranger';
 
-        const play = document.getElementById('play');
-        play.appendChild(this._threejsmenu.domElement);
+        //const play = document.getElementById('play');
+        //play.appendChild(this._threejsmenu.domElement);
+        var play = document.createElement('div');
+        play.id = 'play';
+        document.body.appendChild(play);
         play.style.cssText = "position:fixed;top:25%;left:52%;cursor:pointer;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
         play.innerText = 'Play';
         play.onclick = () => {
           this._play();
         }
 
-        var audio = new Audio('./resources/atmospheric.mp3');
-        audio.loop = true;
-        audio.play();
+        this._audio = new Audio('./resources/atmospheric.mp3');
+        this._audio.loop = true;
+        this._audio.play();
 
-        const music = document.getElementById('settingmusic');
-        music.appendChild(this._threejsmenu.domElement);
+        //const music = document.getElementById('settingmusic');
+        //music.appendChild(this._threejsmenu.domElement);
+        var music = document.createElement('div');
+        music.id = 'music';
+        document.body.appendChild(music);
         music.style.cssText = "position:fixed;top:30%;left:43%;cursor:pointer;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
         music.innerText = 'Stop background music';
         music.onclick = () => {
-          audio.pause();
-          audio.currentTime = 0;
+          this._audio.pause();
+          this._audio.currentTime = 0;
         }
-        const fogsettingon = document.getElementById('settingfogon');
-        fogsettingon.appendChild(this._threejsmenu.domElement);
-        fogsettingon.style.cssText = "position:fixed;top:35%;left:43%;cursor:pointer;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
+        //const fogsettingon = document.getElementById('settingfogon');
+        //fogsettingon.appendChild(this._threejsmenu.domElement);
+        var fogsettingon = document.createElement('div');
+        fogsettingon.id = 'fogsettingon';
+        document.body.appendChild(fogsettingon);
+        fogsettingon.style.cssText = "position:fixed;top:35%;left:44%;cursor:pointer;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
         fogsettingon.innerText = 'Turn fog on (in game)';
         fogsettingon.onclick = () => {
           fogshaders = true;
@@ -579,9 +590,9 @@ class ForestRangerGame {
           (obj) => {
             var mesh = obj.children[0];
             mesh.rotation.x = -Math.PI / 2;
-            mesh.scale.set(3, 3, 3);
-            //obj.position.set(getRandomArbitrary(-3200, 3200), 0, getRandomArbitrary(-3200, 3200));
-            mesh.position.set(0, 0, 0);
+            mesh.scale.set(4, 4, 4);
+            mesh.position.set(getRandomArbitrary(-3200, 3200), 0, getRandomArbitrary(-3200, 3200));
+            //mesh.position.set(0, 0, 0);
             this._zombie = mesh;
             this._zombie.name = 'zombie';
             this._scene.add(this._zombie);
@@ -604,7 +615,7 @@ class ForestRangerGame {
         var crosshair = document.createElement('div');
         crosshair.id = 'crosshair';
         document.body.appendChild(crosshair);
-        crosshair.style.cssText = "position:fixed;top:43%;left:49%;cursor:default;opacity:0.9;z-index:10000;font-size:4vw;font-family:'Brush Script MT',cursive;color:red;";
+        crosshair.style.cssText = "position:fixed;top:43%;left:49%;cursor:default;opacity:0.9;z-index:10000;font-size:4vw;color:red;";//font-family:'Brush Script MT',cursive;
         crosshair.innerText = '+';
 
         var hit = document.createElement('div');
@@ -618,6 +629,12 @@ class ForestRangerGame {
         document.body.appendChild(ready);
         ready.style.cssText = "position:fixed;top:95%;left:0%;cursor:default;opacity:0.9;z-index:0;font-size:1.5vw;font-family:'Brush Script MT',cursive;color:red;";
         ready.innerText = 'Loading your gun...';
+
+        var distance = document.createElement('div');
+        distance.id = 'distance';
+        document.body.appendChild(distance);
+        distance.style.cssText = "position:fixed;top:95%;right:0%;cursor:default;opacity:0.9;z-index:0;font-size:1.5vw;font-family:'Brush Script MT',cursive;color:red;";
+        distance.innerText = 'Zombie is _ units away from you.';
 
         this._scene.fog = new THREE.FogExp2(0xDFE9F3, 0.00005);
         this._totalTime = 0.0;
@@ -719,17 +736,48 @@ class ForestRangerGame {
           }
           //move zombie to camera
           if (this._zombie) {
+            var dist = Math.round(Math.sqrt(Math.pow(this._zombie.position.x - this._camera.position.x, 2) + Math.pow(this._zombie.position.z - this._camera.position.z, 2)))
+            if (dist < 50) {
+              var lastscore = document.getElementById('score').innerHTML.replace("Score: ", "");
+              document.body.replaceChildren();
+              this._threejs = null;
+              this._scene = null;
+              this._camera = null;
+              var distance = document.createElement('div');
+              distance.id = 'death';
+              document.body.appendChild(distance);
+              distance.style.cssText = "position:fixed;top:40%;left:45%;cursor:default;opacity:0.9;z-index:0;font-size:4vw;font-family:'Brush Script MT',cursive;text-decoration:underline;color:red;";
+              distance.innerText = 'You died!';
+
+              var showscore = document.createElement('div');
+              showscore.id = 'showscore';
+              document.body.appendChild(showscore);
+              showscore.style.cssText = "position:fixed;top:51%;left:45%;cursor:default;opacity:0.9;z-index:0;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
+              showscore.innerText = 'Your score was: ' + lastscore;
+
+              var playagain = document.createElement('div');
+              playagain.id = 'playagain';
+              document.body.appendChild(playagain);
+              playagain.style.cssText = "position:fixed;top:55%;left:48%;cursor:pointer;opacity:0.9;z-index:0;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
+              playagain.innerText = 'Play Again';
+              playagain.onclick = () => {
+                document.body.replaceChildren();
+                this._audio.pause();
+                this._audio.currentTime = 0;
+                this._InitialiseMenu();
+              }
+            }
             if (this._zombie.position.x > this._camera.position.x) {
-              this._zombie.position.x -= timeElapsed*5;
+              this._zombie.position.x -= timeElapsed*dist/6;
             } else if (this._zombie.position.x < this._camera.position.x) {
-              this._zombie.position.x += timeElapsed*5;
+              this._zombie.position.x += timeElapsed*dist/6;
             }
             if (this._zombie.position.z > this._camera.position.z) {
-              this._zombie.position.z -= timeElapsed*5;
+              this._zombie.position.z -= timeElapsed*dist/6;
             } else if  (this._zombie.position.z < this._camera.position.z) {
-              this._zombie.position.z += timeElapsed*5;
+              this._zombie.position.z += timeElapsed*dist/6;
             }
-
+            document.getElementById('distance').innerHTML = 'Zombie is ' + dist + ' units away from you.';
           }
         }
     }
