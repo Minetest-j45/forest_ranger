@@ -396,6 +396,10 @@ class ForestRangerGame {
     }
 
     _InitialiseGame() {
+      THREE.ShaderChunk.fog_fragment = ``;
+      THREE.ShaderChunk.fog_pars_fragment = ``;
+      THREE.ShaderChunk.fog_pars_vertex = ``;
+      THREE.ShaderChunk.fog_vertex = ``;
       if (fogshaders){
       THREE.ShaderChunk.fog_fragment = `
       //https://github.com/simondevyoutube/ThreeJS_Tutorial_Fog/blob/main/main.js
