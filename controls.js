@@ -2,16 +2,31 @@
 import {
 	MathUtils,
 	Spherical,
-	Vector3
+	Vector3,
+	Raycaster,
+	Geometry,
+	PointsMaterial,
+	Vertex,
+	Points
 } from 'https://cdn.jsdelivr.net/npm/three@0.118.3/build/three.module.js';
 
 const _lookDirection = new Vector3();
 const _spherical = new Spherical();
 const _target = new Vector3();
+var score = 0;
+var lastShoot = 3;
+
+function wait(ms){
+	var start = new Date().getTime();
+	var end = start;
+	while(end < start + ms) {
+	  end = new Date().getTime();
+   }
+ }
 
 class FirstPersonControls {
 
-	constructor( object, domElement ) {
+	constructor( object, domElement, zombie, scene ) {
 
 		if ( domElement === undefined ) {
 
@@ -153,6 +168,8 @@ class FirstPersonControls {
 				case 'ArrowRight':
 				case 'KeyD': this.moveRight = true; break;
 
+				case 'KeyE': this.shoot = true; break;
+
 				//case 'KeyR': this.moveUp = true; break;
 				//case 'KeyF': this.moveDown = true; break;
 
@@ -175,6 +192,8 @@ class FirstPersonControls {
 
 				case 'ArrowRight':
 				case 'KeyD': this.moveRight = false; break;
+
+				case 'KeyE': this.shoot = false; break;
 
 				//case 'KeyR': this.moveUp = false; break;
 				//case 'KeyF': this.moveDown = false; break;
@@ -271,19 +290,106 @@ class FirstPersonControls {
 
 				targetPosition.setFromSphericalCoords( 1, phi, theta ).add( position );
 
-				
-				/*if (targetPosition.x > 3199 || targetPosition.x < -3199) {
-					targetPosition = new Vector3(position.x, targetPosition.y, targetPosition.z);
-				}
-				if (targetPosition.z > 3199 || targetPosition.z < -3199) {
-					targetPosition = new Vector3(targetPosition.x, targetPosition.y, position.z);
-				}
-				if (targetPosition.y > 51 || targetPosition.y < 49) {
-					targetPosition = new Vector3(targetPosition.x, position.y, targetPosition.z);
-				}*/
-
 				this.object.lookAt( targetPosition );
 
+				if (this.shoot && lastShoot > 3) {
+					var raycaster = new Raycaster();
+					var cameraDir = new Vector3();
+					raycaster.set(this.object.position, this.object.getWorldDirection(cameraDir));
+
+					var intersects = raycaster.intersectObjects(scene.children, true);
+					if (intersects.length > 0) {
+						/*for (var i = 0; i < intersects.length; i++) {
+							console.log(intersects[i].object.name);
+							if (intersects[i].object.name != "cameraBox") {
+								if (intersects[i].object.name == "zombie") {
+									//zombie.position.set(0, -1000, 0);
+									console.log("zombie");
+									zombie.position.set(0, 0, 0);
+									this.score += 1;
+									document.body.childNodes[0].innerHTML = "Score: " + this.score;
+								}
+
+								var particles = new Geometry(),
+    							pMaterial = new PointsMaterial({color: 0xFFFF00, size: 5});
+
+								// create a particle
+								var particle = intersects[i].point;
+					  
+								// add it to the geometry
+								particles.vertices.push(particle);
+					  		
+								var particleSystem = new Points(particles, pMaterial);
+					
+								scene.add(particleSystem);
+							}
+						}*/
+						if (intersects[0].object.name == "cameraBox") {
+							console.log("cameraBox");
+							if (intersects[1].object.name == "zombie") {
+								console.log("zombie");
+								score += 1;
+								document.body.childNodes[0].innerHTML = "Score: " + score;
+								var particles = new Geometry(),
+    							pMaterial = new PointsMaterial({color: 0xFFFF00, size: 5});
+
+								// create a particle
+								var particle = intersects[1].point;
+					  
+								// add it to the geometry
+								particles.vertices.push(particle);
+					  		
+								var particleSystem = new Points(particles, pMaterial);
+					
+								scene.add(particleSystem);
+								document.body.childNodes[2].innerHTML = "Hit!";
+								setTimeout(function() {
+									document.body.childNodes[2].innerHTML = "";
+									scene.remove(particleSystem);
+								}, 1000);
+							}
+						} else if (intersects[0].object.name == "zombie") {
+							console.log("zombie");
+							score += 1;
+							document.body.childNodes[0].innerHTML = "Score: " + score;
+							var particles = new Geometry(),
+    						pMaterial = new PointsMaterial({color: 0xFFFF00, size: 5});
+
+							// create a particle
+							var particle = intersects[0].point;
+					  
+							// add it to the geometry
+							particles.vertices.push(particle);
+					  		
+							var particleSystem = new Points(particles, pMaterial);
+					
+							scene.add(particleSystem);
+							document.body.childNodes[2].innerHTML = "Hit!";
+							setTimeout(function() {
+								document.body.childNodes[2].innerHTML = "";
+								scene.remove(particleSystem);
+							}, 1000);
+							
+						} else {
+							var particles = new Geometry(),
+    							pMaterial = new PointsMaterial({color: 0xFFFF00, size: 5});
+
+								// create a particle
+								var particle = intersects[0].point;
+					  
+								// add it to the geometry
+								particles.vertices.push(particle);
+					  		
+								var particleSystem = new Points(particles, pMaterial);
+					
+								scene.add(particleSystem);
+						}
+					}
+					this.shoot = false;
+					lastShoot = 0;
+				} else {
+					lastShoot += delta;
+				}
 			};
 
 		}();

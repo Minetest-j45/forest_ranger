@@ -1,10 +1,9 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 
-//import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {FirstPersonControls} from './controls.js';
 
 import {OBJLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/OBJLoader.js';
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/GLTFLoader.js'
+import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/GLTFLoader.js';
 
 import Stats from 'https://cdn.jsdelivr.net/npm/three@0.112.1/examples/jsm/libs/stats.module.js';
 
@@ -12,11 +11,10 @@ var stats = true;//for settings, or keybind
 var beforestats = true;
 var fogshaders = false;//greatly increases performance when false but removes alot of the atmosphere
 
-
+const raycaster = new THREE.Raycaster();
+var collidableMeshList = [];
 var clock = new THREE.Clock();
 var mixer = null;
-
-var quaternion = new THREE.Quaternion();
 
 const _NOISE_GLSL = `
 //
@@ -281,6 +279,14 @@ class ForestRangerGame {
           this._camera.lookAt(root.position);
         });
 
+        objLoader.load('./resources/jeep.obj', (root) => {
+          this._menuscene.add(root);
+          root.position.set(20, 0, -150);
+          //root.rotation.x = -Math.PI / 2;
+          root.scale.set(10, 12, 10);
+          this._camera.lookAt(root.position);
+        });
+
         var playerLoader = new GLTFLoader();
         playerLoader.load('./resources/ranger.glb', (gltf) => {
             var player = gltf.scene;
@@ -290,14 +296,6 @@ class ForestRangerGame {
             }
         );
 
-        objLoader.load('./resources/jeep.obj', (root) => {
-          this._menuscene.add(root);
-          root.position.set(20, 0, -150);
-          //root.rotation.x = -Math.PI / 2;
-          root.scale.set(10, 12, 10);
-          this._camera.lookAt(root.position);
-        });
-        
         //try setting loaders to null to increase performance
         objLoader = null;
         playerLoader = null;
@@ -354,8 +352,9 @@ class ForestRangerGame {
         play.onclick = () => {
           this._play();
         }
-        
-        this._menuscene.fog = new THREE.FogExp2(0xDFE9F3, 0.00055);
+        if (fogshaders) {
+          this._menuscene.fog = new THREE.FogExp2(0xDFE9F3, 0.00055);
+        }
         this._totalTime = 0.0;
         this._previousRAF = null;
         this._RAF();
@@ -448,6 +447,15 @@ class ForestRangerGame {
 
         this._scene = new THREE.Scene();
 
+        this._cameraBox = new THREE.Mesh(
+          new THREE.BoxGeometry(5, 5, 5),
+          new THREE.MeshBasicMaterial({color: 0x000000})
+        );
+        this._cameraBox.position.set(75, 50, 0);
+        this._cameraBox.name = 'cameraBox';
+        this._cameraBox.visible = false;
+        this._scene.add(this._cameraBox);
+
 
         let light = new THREE.DirectionalLight(0xFFFFFF, 0.2);
         light.position.set(-2580, 2013, -2860);
@@ -468,11 +476,6 @@ class ForestRangerGame {
 
         light = new THREE.AmbientLight(0x101010, 0.3);
         this._scene.add(light);
-
-        this._controls = new FirstPersonControls(this._camera, this._threejs.domElement);
-        this._controls.movementSpeed = 100;
-        this._controls.lookSpeed = 0.1;
-        //this._controls.mouseDragOn = true;
 
         this._shaders = [];
         const _ModifyShader = (s) => {
@@ -529,7 +532,9 @@ class ForestRangerGame {
         for (let x = 0; x < 10; ++x) {
             for (let y = 0; y < 10; ++y) {
               const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+              collidableMeshList.push(trunk);
               const leaves = new THREE.Mesh(leavesGeo, leavesMat);
+              collidableMeshList.push(leaves);
               trunk.scale.set(20, (Math.random() + 2.0) * 100.0, 20);
               trunk.position.set(
                   3200.0 * (Math.random() * 2.0 - 1.0),
@@ -553,7 +558,48 @@ class ForestRangerGame {
             }
           }
 
-        this._scene.fog = new THREE.FogExp2(0xDFE9F3, 0.00005);
+        var objLoader = new OBJLoader();
+        objLoader.load('./resources/zombie.obj', 
+          (obj) => {
+            var mesh = obj.children[0];
+            mesh.rotation.x = -Math.PI / 2;
+            mesh.scale.set(3, 3, 3);
+            //obj.position.set(getRandomArbitrary(-3200, 3200), 0, getRandomArbitrary(-3200, 3200));
+            mesh.position.set(0, 0, 0);
+            this._zombie = mesh;
+            this._zombie.name = 'zombie';
+            this._scene.add(this._zombie);
+            this._controls = new FirstPersonControls(this._camera, this._threejs.domElement, this._zombie, this._scene);
+            this._controls.movementSpeed = 100;
+            this._controls.lookSpeed = 0.1;
+          },
+        );
+
+        //try setting loaders to null to increase performance
+        objLoader = null;
+
+        var scorediv = document.createElement('div');
+        scorediv.id = 'score';
+        document.body.appendChild(scorediv);
+        scorediv.appendChild(this._threejs.domElement);
+	      scorediv.style.cssText = "position:fixed;top:0%;right:0%;cursor:default;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;text-decoration:underline;color:red;";
+        scorediv.innerText = 'Score: 0';
+
+        var crosshair = document.createElement('div');
+        crosshair.id = 'crosshair';
+        document.body.appendChild(crosshair);
+        crosshair.style.cssText = "position:fixed;top:43%;left:49%;cursor:default;opacity:0.9;z-index:10000;font-size:4vw;font-family:'Brush Script MT',cursive;color:red;";
+        crosshair.innerText = '+';
+
+        var hit = document.createElement('div');
+        hit.id = 'hit';
+        document.body.appendChild(hit);
+        hit.style.cssText = "position:fixed;top:0%;left:49%;cursor:default;opacity:0.9;z-index:0;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
+        hit.innerText = '';
+
+        if (fogshaders) {
+          this._scene.fog = new THREE.FogExp2(0xDFE9F3, 0.00005);
+        }
         this._totalTime = 0.0;
         this._previousRAF = null;
         this._RAF();
@@ -602,26 +648,16 @@ class ForestRangerGame {
             if (stats && this._stats) {
               this._stats.update();
             }
-            
-            let vector = new THREE.Vector3(0, 0, 0);
-            vector.applyQuaternion(this._camera.quaternion);
           }
           this._RAF();
         });
     }
-    /*_RAF() {
-        requestAnimationFrame(() => {
-          this._threejs.render(this._scene, this._camera);
-          this._RAF();
-        });
-      }*/
 
     _Step(timeElapsed) {
         this._totalTime += timeElapsed;
         for (let s of this._shaders) {
           s.uniforms.fogTime.value = this._totalTime;
         }
-        console.log(this._camera.position);
         if (this._threejsmenu) {
           //thanks to EliasFleckenstein03 (fleckenstein@elidragon.com) for this
           let a = this._totalTime * Math.PI * 2 * /*0.005*/ 0.01;
@@ -643,8 +679,26 @@ class ForestRangerGame {
             beforestats = stats;
           }
         } else if (this._threejs) {
+          //collision detection (http://stemkoski.github.io/Three.js/Collision-Detection.html)
+          for (var vertexIndex = 0; vertexIndex < this._cameraBox.geometry.vertices.length; vertexIndex++)
+          {  
+            var localVertex = this._cameraBox.geometry.vertices[vertexIndex].clone();
+            var globalVertex = localVertex.applyMatrix4(this._cameraBox.matrix);
+            var directionVector = globalVertex.sub( this._cameraBox.position );
 
-          //checks if camera is out of 3200 x 3200 bounds
+            raycaster.set(this._cameraBox.position, directionVector.clone().normalize());
+            var collisionResults = raycaster.intersectObjects( collidableMeshList );
+            if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
+            {
+              this._camera.position.x = this._camera.position.x - (this._camera.position.x - collisionResults[0].point.x-5);
+              this._camera.position.z = this._camera.position.z - (this._camera.position.z - collisionResults[0].point.z-5);
+            }
+          }
+          this._cameraBox.position.x = this._camera.position.x;
+          this._cameraBox.position.y = this._camera.position.y;
+          this._cameraBox.position.z = this._camera.position.z;
+          
+          //checks if camera is out of bounds
           if (this._camera.position.x > 3190) {
             this._camera.position.x = 3190;
           } else if (this._camera.position.x < -3190) {
@@ -655,10 +709,25 @@ class ForestRangerGame {
           } else if (this._camera.position.z < -3190) {
             this._camera.position.z = -3190;
           }
+          //update controls
           if (this._controls) {
             this._controls.update(clock.getDelta());
           }
-          
+          //move zombie to camera
+          /*if (this._zombie) {
+            if (this._zombie.position.x > this._camera.position.x) {
+              this._zombie.position.x -= timeElapsed*5;
+            } else if (this._zombie.position.x < this._camera.position.x) {
+              this._zombie.position.x += timeElapsed*5;
+            }
+            if (this._zombie.position.z > this._camera.position.z) {
+              this._zombie.position.z -= timeElapsed*5;
+            } else if  (this._zombie.position.z < this._camera.position.z) {
+              this._zombie.position.z += timeElapsed*5;
+            }
+
+          }*/
+          //stats
           if (stats && !beforestats) {
             const target = document.getElementById('stats');
             target.appendChild(this._threejs.domElement);
