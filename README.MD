@@ -12,7 +12,7 @@ Left Mouse Button + Move Mouse - look around
 Shooting the zombie in the same place wont give you more points.<br>
 The middle of crosshair might not actually be where you are shooting, it depends on the screen. <br>
 There is a 3 second shooting delay.<br>
-Fog is always on by default, to turn it off in game, click "Turn fog off (in game)" on the menu.
+Fog is off by default as it can cause lag, to turn it on in game and increase the atmosphere, click "Turn fog on (in game)".
 
 ##Licenses
 skybox image: Creative Commons Attribution 3.0 Unported License. (from http://www.hdrlabs.com/sibl/archive.html)<br>

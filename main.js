@@ -7,7 +7,7 @@ import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/js
 
 import Stats from 'https://cdn.jsdelivr.net/npm/three@0.112.1/examples/jsm/libs/stats.module.js';
 
-var fogshaders = true;//greatly increases performance when false but removes alot of the atmosphere
+var fogshaders = false;//greatly increases performance when false but removes alot of the atmosphere
 
 const raycaster = new THREE.Raycaster();
 var collidableMeshList = [];
@@ -369,13 +369,6 @@ class ForestRangerGame {
         fogsettingon.onclick = () => {
           fogshaders = true;
         }
-        const fogsettingoff = document.getElementById('settingfogoff');
-        fogsettingoff.appendChild(this._threejsmenu.domElement);
-        fogsettingoff.style.cssText = "position:fixed;top:40%;left:43%;cursor:pointer;opacity:0.9;z-index:10000;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
-        fogsettingoff.innerText = 'Turn fog off (in game)';
-        fogsettingoff.onclick = () => {
-          fogshaders = false;
-        }
 
         this._menuscene.fog = new THREE.FogExp2(0xDFE9F3, 0.00055);
         this._totalTime = 0.0;
@@ -725,7 +718,7 @@ class ForestRangerGame {
             this._controls.update(clock.getDelta());
           }
           //move zombie to camera
-          /*if (this._zombie) {
+          if (this._zombie) {
             if (this._zombie.position.x > this._camera.position.x) {
               this._zombie.position.x -= timeElapsed*5;
             } else if (this._zombie.position.x < this._camera.position.x) {
@@ -737,7 +730,7 @@ class ForestRangerGame {
               this._zombie.position.z += timeElapsed*5;
             }
 
-          }*/
+          }
         }
     }
 }
