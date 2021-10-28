@@ -2,10 +2,10 @@
 Try get as many points as you can :)
 
 ## How to play
-W - move forwards<br>
-A- move left<br>
-S - move backwards<br>
-D - move right<br>
+W/Up Arrow - move forwards<br>
+A/Left Arrow- move left<br>
+S/Down Arrow - move backwards<br>
+D/Right Arrow - move right<br>
 E - shoot<br>
 Left Mouse Button + Move Mouse - look around
 
