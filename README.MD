@@ -27,6 +27,16 @@ Zombies get progressively faster as you get more points.<br>
 If the zombie teleports close to you, you are a very lucky but dead person.<br>
 To kill you, a zombie must be within 50 units of you. Watch out!
 
+## Screenshots
+Main Menu:
+![image](https://user-images.githubusercontent.com/55553015/139248801-54c27935-fe1c-4b03-969d-df8889fd4260.png)
+Game With fog:
+![image](https://user-images.githubusercontent.com/55553015/139248863-df535ee1-bde5-43bf-ac4d-e0653c387c1b.png)
+![image](https://user-images.githubusercontent.com/55553015/139248880-ab73ff52-e109-4998-89c2-cf21c4c137cb.png)
+Game without fog:
+![image](https://user-images.githubusercontent.com/55553015/139248915-7e94873a-7100-44d8-898d-ec012362ce52.png)
+![image](https://user-images.githubusercontent.com/55553015/139248929-9b83a998-d142-42a7-8c75-b0088adacacf.png)
+
 ## Licenses
 my code: MIT License<br>
 skybox image: Creative Commons Attribution 3.0 Unported License. (from http://www.hdrlabs.com/sibl/archive.html)<br>
