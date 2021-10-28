@@ -3,6 +3,9 @@ A simple voxel horror game, originally written for MaxParata's voxel horror game
 Try get as many points as you can :)
 
 ## How to play
+It is as simple as downloading this repository and opening the index.html file<br>
+
+## Controls
 W/Up Arrow - move forwards<br>
 A/Left Arrow- move left<br>
 S/Down Arrow - move backwards<br>
