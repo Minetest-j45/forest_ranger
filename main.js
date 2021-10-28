@@ -1,6 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 
-import {FirstPersonControls, setScore} from './controls.js';
+import {FirstPersonControls, setScore, getScore} from './controls.js';
 
 import {OBJLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/OBJLoader.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/GLTFLoader.js';
@@ -746,7 +746,8 @@ class ForestRangerGame {
           if (this._zombie) {
             var dist = Math.round(Math.sqrt(Math.pow(this._zombie.position.x - this._camera.position.x, 2) + Math.pow(this._zombie.position.z - this._camera.position.z, 2)))
             if (dist < 50) {//death
-              var lastscore = document.getElementById('score').innerHTML.replace("Score: ", "");
+              //var lastscore = document.getElementById('score').innerHTML.replace("Score: ", "");
+              var lastscore = getScore();
               document.body.replaceChildren();
               this._threejs = null;
               this._scene = null;
@@ -777,15 +778,23 @@ class ForestRangerGame {
                 this._InitialiseMenu();
               }
             }
+            var currentscore = getScore();
+            currentscore += 1;
+            currentscore /= 10;
             if (this._zombie.position.x > this._camera.position.x) {
-              this._zombie.position.x -= timeElapsed*dist/6;
+              //this._zombie.position.x -= timeElapsed*dist/divider;
+              //this._zombie.position.x -= timeElapsed*dist/6;
+              this._zombie.position.x -= timeElapsed*dist*currentscore;
             } else if (this._zombie.position.x < this._camera.position.x) {
-              this._zombie.position.x += timeElapsed*dist/6;
+              //this._zombie.position.x += timeElapsed*dist/divider;
+              this._zombie.position.x += timeElapsed*dist*currentscore;
             }
             if (this._zombie.position.z > this._camera.position.z) {
-              this._zombie.position.z -= timeElapsed*dist/6;
+              //this._zombie.position.z -= timeElapsed*dist/divider;
+              this._zombie.position.z -= timeElapsed*dist*currentscore;
             } else if  (this._zombie.position.z < this._camera.position.z) {
-              this._zombie.position.z += timeElapsed*dist/6;
+              //this._zombie.position.z += timeElapsed*dist/divider;
+              this._zombie.position.z += timeElapsed*dist*currentscore;
             }
             document.getElementById('distance').innerHTML = 'Zombie is ' + dist + ' units away from you.';
             //make zombie rotate z axis to always face camera

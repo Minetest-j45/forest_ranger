@@ -23,6 +23,9 @@ function getRandomArbitrary(min, max) {
 function setScore(setscore) {
 	score = setscore;
 }
+function getScore() {
+	return score;
+}
 
 class FirstPersonControls {
 
@@ -473,4 +476,4 @@ function contextmenu( event ) {
 
 }
 
-export { FirstPersonControls, setScore };
+export { FirstPersonControls, setScore, getScore };
