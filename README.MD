@@ -11,6 +11,7 @@ E - shoot<br>
 Left Mouse Button + Move Mouse - look around
 
 ## Notes
+The audio might be automatically blocked by your browser, please unblock it for the extra effect as you can always turn it off via the setting on the main menu<br>
 Tip: dont stay still.<br>
 If you want the music to turn back on after you turned it off, or you want to turn the fog off again, refresh the page. BUT NOTE THIS WILL LOOSE ANY PROGRESS!<br>
 The gun takes 3 seconds to reload.<br>
