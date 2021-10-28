@@ -20,6 +20,10 @@ function getRandomArbitrary(min, max) {
 	return Math.random() * (max - min) + min;
 }
 
+function setScore(setscore) {
+	score = setscore;
+}
+
 class FirstPersonControls {
 
 	constructor( object, domElement, zombie, scene ) {
@@ -308,7 +312,8 @@ class FirstPersonControls {
 							if (intersects[1].object.name == "zombie") {
 								var audio = new Audio('./resources/ding.mp3');
 								audio.play();
-								score += 1;
+								//score += 1;
+								setScore(score + 1);
 								document.body.childNodes[0].innerHTML = "Score: " + score;
 								zombie.position.x = getRandomArbitrary(-3200, 3200);
 								zombie.position.z = getRandomArbitrary(-3200, 3200);
@@ -334,7 +339,8 @@ class FirstPersonControls {
 						} else if (intersects[0].object.name == "zombie") {
 							var audio = new Audio('./resources/ding.mp3');
 							audio.play();
-							score += 1;
+							//score += 1;
+							setScore(score + 1);
 							document.body.childNodes[0].innerHTML = "Score: " + score;
 							zombie.position.x = getRandomArbitrary(-3200, 3200);
 							zombie.position.z = getRandomArbitrary(-3200, 3200);
@@ -436,4 +442,4 @@ function contextmenu( event ) {
 
 }
 
-export { FirstPersonControls };
+export { FirstPersonControls, setScore };

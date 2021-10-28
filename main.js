@@ -1,6 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 
-import {FirstPersonControls} from './controls.js';
+import {FirstPersonControls, setScore} from './controls.js';
 
 import {OBJLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/OBJLoader.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/GLTFLoader.js';
@@ -762,6 +762,8 @@ class ForestRangerGame {
               document.body.appendChild(showscore);
               showscore.style.cssText = "position:fixed;top:51%;left:45%;cursor:default;opacity:0.9;z-index:0;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
               showscore.innerText = 'Your score was: ' + lastscore;
+              
+              setScore(0);
 
               var playagain = document.createElement('div');
               playagain.id = 'playagain';
