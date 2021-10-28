@@ -1,4 +1,5 @@
 # Forest Ranger
+A simple voxel horror game, originally written for MaxParata's voxel horror game jam (https://itch.io/jam/voxel-horror-jam-2021).
 Try get as many points as you can :)
 
 ## How to play
