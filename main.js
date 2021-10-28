@@ -745,7 +745,7 @@ class ForestRangerGame {
           //move zombie to camera
           if (this._zombie) {
             var dist = Math.round(Math.sqrt(Math.pow(this._zombie.position.x - this._camera.position.x, 2) + Math.pow(this._zombie.position.z - this._camera.position.z, 2)))
-            if (dist < 50) {
+            if (dist < 50) {//death
               var lastscore = document.getElementById('score').innerHTML.replace("Score: ", "");
               document.body.replaceChildren();
               this._threejs = null;
@@ -762,7 +762,7 @@ class ForestRangerGame {
               document.body.appendChild(showscore);
               showscore.style.cssText = "position:fixed;top:51%;left:45%;cursor:default;opacity:0.9;z-index:0;font-size:2vw;font-family:'Brush Script MT',cursive;color:red;";
               showscore.innerText = 'Your score was: ' + lastscore;
-              
+
               setScore(0);
 
               var playagain = document.createElement('div');

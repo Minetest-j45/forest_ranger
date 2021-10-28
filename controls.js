@@ -330,10 +330,25 @@ class FirstPersonControls {
 								var particleSystem = new Points(particles, pMaterial);
 					
 								scene.add(particleSystem);
+
+								var bParticles = new Geometry(),
+								bMaterial = new PointsMaterial({color: 0xFF0000, size: 5});
+								
+								for (let i=0; i<5; i++) {
+									var px = getRandomArbitrary(-10, 10)+intersects[1].point.x,
+									py = getRandomArbitrary(-10, 10)+intersects[1].point.y,
+									pz = getRandomArbitrary(-10, 10)+intersects[1].point.z,
+									bParticle = new Vector3(px, py, pz);
+
+									bParticles.vertices.push(bParticle);
+								}
+								var bParticleSystem = new Points(bParticles, bMaterial);
+								scene.add(bParticleSystem);
 								document.body.childNodes[2].innerHTML = "Hit!";
 								setTimeout(function() {
 									document.body.childNodes[2].innerHTML = "";
 									scene.remove(particleSystem);
+									scene.remove(bParticleSystem);
 								}, 1000);
 							}
 						} else if (intersects[0].object.name == "zombie") {
@@ -357,10 +372,26 @@ class FirstPersonControls {
 							var particleSystem = new Points(particles, pMaterial);
 					
 							scene.add(particleSystem);
+
+							var bParticles = new Geometry(),
+							bMaterial = new PointsMaterial({color: 0xFF0000, size: 5});
+								
+							for (let i=0; i<10; i++) {
+								var px = getRandomArbitrary(-10, 10)+intersects[0].point.x,
+								py = getRandomArbitrary(-10, 10)+intersects[0].point.y,
+								pz = getRandomArbitrary(-10, 10)+intersects[0].point.z,
+								bParticle = new Vector3(px, py, pz);
+
+								bParticles.vertices.push(bParticle);
+							}
+							var bParticleSystem = new Points(bParticles, bMaterial);
+							scene.add(bParticleSystem);
+
 							document.body.childNodes[2].innerHTML = "Hit!";
 							setTimeout(function() {
 								document.body.childNodes[2].innerHTML = "";
 								scene.remove(particleSystem);
+								scene.remove(bParticleSystem);
 							}, 1000);
 							
 						} else {
