@@ -782,6 +782,8 @@ class ForestRangerGame {
               this._zombie.position.z += timeElapsed*dist/6;
             }
             document.getElementById('distance').innerHTML = 'Zombie is ' + dist + ' units away from you.';
+            //make zombie rotate z axis to always face camera
+            this._zombie.rotation.z = -Math.atan2(this._camera.position.z - this._zombie.position.z, this._camera.position.x - this._zombie.position.x)+Math.PI/2;
           }
         }
     }
