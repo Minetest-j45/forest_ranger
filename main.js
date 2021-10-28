@@ -8,6 +8,7 @@ import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/js
 import Stats from 'https://cdn.jsdelivr.net/npm/three@0.112.1/examples/jsm/libs/stats.module.js';
 
 var fogshaders = false;//greatly increases performance when false but removes alot of the atmosphere
+var varmusic = true;
 
 const raycaster = new THREE.Raycaster();
 var collidableMeshList = [];
@@ -357,7 +358,9 @@ class ForestRangerGame {
 
         this._audio = new Audio('./resources/atmospheric.mp3');
         this._audio.loop = true;
-        this._audio.play();
+        if (varmusic) {
+          this._audio.play();
+        }
 
         //const music = document.getElementById('settingmusic');
         //music.appendChild(this._threejsmenu.domElement);
@@ -369,6 +372,7 @@ class ForestRangerGame {
         music.onclick = () => {
           this._audio.pause();
           this._audio.currentTime = 0;
+          varmusic = false;
         }
         //const fogsettingon = document.getElementById('settingfogon');
         //fogsettingon.appendChild(this._threejsmenu.domElement);
