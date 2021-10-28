@@ -786,7 +786,6 @@ class ForestRangerGame {
               //this._zombie.position.x -= timeElapsed*dist/6;
               this._zombie.position.x -= timeElapsed*dist*currentscore;
             } else if (this._zombie.position.x < this._camera.position.x) {
-              //this._zombie.position.x += timeElapsed*dist/divider;
               this._zombie.position.x += timeElapsed*dist*currentscore;
             }
             if (this._zombie.position.z > this._camera.position.z) {

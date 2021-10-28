@@ -18,9 +18,12 @@ Bullets are where the gun actually hit, some may look low from far away and appe
 Fog is off by default as it can cause lag, to turn it on in game and increase the atmosphere, click "Turn fog on (in game)".<br>
 Fun fact: zombies jittering/shaking is on purpose :P<br>
 Zombies teleport when they get shot and you get a point.<br>
-If the zombie teleports close to you, you are a very lucky but dead person.
+Zombies get progressively faster as you get more points.<br>
+If the zombie teleports close to you, you are a very lucky but dead person.<br>
+To kill you, a zombie must be within 50 units of you. Watch out!
 
 ##Licenses
+my code: MIT License<br>
 skybox image: Creative Commons Attribution 3.0 Unported License. (from http://www.hdrlabs.com/sibl/archive.html)<br>
 forest house model + ranger model + zombie model: CC-BY-SA 3.0. (i made myself)<br>
 jeep car model: Royalty Free License (from https://www.cgtrader.com/items/814228/download-page)<br>
