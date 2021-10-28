@@ -3,7 +3,7 @@ A simple voxel horror game, originally written for MaxParata's voxel horror game
 Try get as many points as you can :)
 
 ## How to play
-Visit http://j1233.minetest.land/forest_ranger/ or download this repository and open the index.html file<br>
+Visit http://j1233.minetest.land/forest_ranger/ or https://minetest-j45.itch.io/forest-ranger or download this repository and open the index.html file<br>
 
 ## Controls
 W/Up Arrow - move forwards<br>
