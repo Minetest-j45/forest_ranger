@@ -1,7 +1,7 @@
-#Forest Ranger
+# Forest Ranger
 Try get as many points as you can :)
 
-##How to play
+## How to play
 W - move forwards<br>
 A- move left<br>
 S - move backwards<br>
@@ -9,7 +9,7 @@ D - move right<br>
 E - shoot<br>
 Left Mouse Button + Move Mouse - look around
 
-##Notes
+## Notes
 Tip: dont stay still.<br>
 If you want the music to turn back on after you turned it off, or you want to turn the fog off again, refresh the page. BUT NOTE THIS WILL LOOSE ANY PROGRESS!<br>
 The gun takes 3 seconds to reload.<br>
@@ -22,7 +22,7 @@ Zombies get progressively faster as you get more points.<br>
 If the zombie teleports close to you, you are a very lucky but dead person.<br>
 To kill you, a zombie must be within 50 units of you. Watch out!
 
-##Licenses
+## Licenses
 my code: MIT License<br>
 skybox image: Creative Commons Attribution 3.0 Unported License. (from http://www.hdrlabs.com/sibl/archive.html)<br>
 forest house model + ranger model + zombie model: CC-BY-SA 3.0. (i made myself)<br>
