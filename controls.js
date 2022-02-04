@@ -8,7 +8,7 @@ import {
 	PointsMaterial,
 	Vertex,
 	Points
-} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/build/three.module.js';
+} from './threejs/three.module.js';
 
 const _lookDirection = new Vector3();
 const _spherical = new Spherical();
