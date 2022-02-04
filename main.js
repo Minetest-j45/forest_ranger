@@ -1,11 +1,11 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
+import * as THREE from './threejs/three.module.js';
 
 import {FirstPersonControls, setScore, getScore} from './controls.js';
 
-import {OBJLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/OBJLoader.js';
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/GLTFLoader.js';
+import {OBJLoader} from './threejs/OBJLoader.js';
+import {GLTFLoader} from './threejs/GLTFLoader.js';
 
-import Stats from 'https://cdn.jsdelivr.net/npm/three@0.112.1/examples/jsm/libs/stats.module.js';
+import Stats from './threejs/stats.module.js';
 
 var fogshaders = false;//greatly increases performance when false but removes alot of the atmosphere
 var varmusic = true;
