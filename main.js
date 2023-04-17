@@ -250,7 +250,7 @@ class ForestRangerGame {
 
         const planeSize = 640;
         const planeLoader = new THREE.TextureLoader();
-        const planeText = planeLoader.load('./resources/ground.png');
+        const planeText = planeLoader.load('./resources/ground.jpg');
         planeText.wrapS = THREE.RepeatWrapping;
         planeText.wrapT = THREE.RepeatWrapping;
         planeText.magFilter = THREE.NearestFilter;
