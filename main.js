@@ -543,7 +543,7 @@ class ForestRangerGame {
       this._scene.add(skybox);
 
         
-        const planetexture = new THREE.TextureLoader().load('./resources/ground.png');
+        const planetexture = new THREE.TextureLoader().load('./resources/ground.jpg');
         planetexture.wrapS = planetexture.wrapT = THREE.RepeatWrapping;
         planetexture.repeat.set( 6400, 6400 );
         planetexture.anisotropy = 16;
